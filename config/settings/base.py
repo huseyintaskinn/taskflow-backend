@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_spectacular',
 
     #apps
     'apps.users.apps.UsersConfig',
@@ -135,7 +136,9 @@ AUTH_USER_MODEL = "users.User"
 
 from datetime import timedelta
 
+
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
@@ -144,9 +147,18 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "TaskFlow Backend API",
+    "DESCRIPTION": "JWT ve Role-based authorization içeren backend servisleri",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 

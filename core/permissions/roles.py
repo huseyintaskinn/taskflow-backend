@@ -2,7 +2,7 @@ from core.permissions.base import BaseAuthenticatedPermission
 
 
 class HasRole(BaseAuthenticatedPermission):
-    required_roles = []
+    required_roles: list[str] = []
 
     def has_permission(self, request, view):
         if not super().has_permission(request, view):
@@ -13,8 +13,8 @@ class HasRole(BaseAuthenticatedPermission):
 
 
 class IsAdmin(HasRole):
-    required_roles = ["admin"]
+    required_roles = ["ADMIN"]
 
 
 class IsManager(HasRole):
-    required_roles = ["manager"]
+    required_roles = ["MANAGER"]
