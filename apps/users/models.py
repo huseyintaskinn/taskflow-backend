@@ -24,7 +24,11 @@ class UserManager(BaseUserManager):
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        db_index=True
+    )
     description = models.TextField(blank=True)
 
     def __str__(self):
