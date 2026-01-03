@@ -4,9 +4,11 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from apps.users.views.admin_views import AdminDashboardView
+from apps.users.views.auth_views import LogoutView
 
 urlpatterns = [
     path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("admin/dashboard/", AdminDashboardView.as_view(), name="admin-dashboard"),
 ]
