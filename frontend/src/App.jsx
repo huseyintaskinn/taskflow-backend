@@ -139,7 +139,7 @@ function App() {
     setLoginError('');
     setLoginLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/users/login/`, {
+      const res = await fetch(`${API_BASE}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -161,7 +161,17 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/api/auth/logout/`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } catch (err) {
+        console.error("Logout blacklist error:", err);
+      }
+    }
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setToken(null);

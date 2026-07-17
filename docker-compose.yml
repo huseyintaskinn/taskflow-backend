@@ -39,6 +39,9 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/taskflow_db
+      REDIS_URL: redis://redis:6379/1
     volumes:
       - .:/srv/app
     ports:
