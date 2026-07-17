@@ -8,7 +8,12 @@ class HasRole(BaseAuthenticatedPermission):
         if not super().has_permission(request, view):
             return False
 
-        user_roles = request.user.roles.values_list("name", flat=True)
+        # Read roles from JWT payload if authenticated via JWT to save DB queries
+        if request.auth and hasattr(request.auth, "get"):
+            user_roles = request.auth.get("roles", [])
+        else:
+            user_roles = list(request.user.roles.values_list("name", flat=True))
+
         return any(role in user_roles for role in self.required_roles)
 
 
