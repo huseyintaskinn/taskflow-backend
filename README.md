@@ -1,96 +1,124 @@
-# TaskFlow Backend
+# TaskFlow - Kurumsal Görev Yönetim Sistemi
 
-TaskFlow, ekipler için görev (task) yönetimini hedefleyen, ölçeklenebilir ve güvenli bir backend servisidir.  
-Proje; modern Django ekosistemi, JWT tabanlı kimlik doğrulama ve Redis destekli oturum/token yönetimi üzerine inşa edilmiştir.
+TaskFlow; ekipler için projeleri, görevleri ve iş süreçlerini kolaylaştırmak, rol bazlı yetkilendirmeyle güvenli şekilde yönetmek amacıyla geliştirilmiş kurumsal düzeyde bir web portalıdır. 
 
-## 🚀 Özellikler
-
-- Django + Django REST Framework tabanlı REST API
-- JWT (SimpleJWT) ile kimlik doğrulama
-- Redis destekli token blacklist / logout mekanizması
-- Role-based yetkilendirme (Admin / User)
-- Swagger (OpenAPI) dokümantasyonu
-- Modüler ve genişletilebilir proje mimarisi
-- Task & Project domain yapısına uygun modelleme
+Proje; Django REST Framework (DRF) tabanlı güvenli bir API katmanı ve modern React + Tailwind CSS tabanlı bir tek sayfa uygulamasından (SPA) oluşmaktadır.
 
 ---
 
-## 🧱 Mimari Yaklaşım
+## 📸 Arayüz Ekran Görüntüleri
 
-- **Config-based settings** (environment ayrımı)
-- **App-based modüler yapı**
-- Authentication & authorization katmanı ayrıştırılmıştır
-- Redis, sadece cache değil güvenlik akışının bir parçası olarak kullanılır
-- API-first yaklaşım (frontend bağımsız)
+### 1. Giriş Ekranı
+![Giriş Ekranı](docs/images/login.png)
 
----
+### 2. Genel Durum & Metrikler (Dashboard)
+![Dashboard Paneli](docs/images/dashboard.png)
 
-## 🗂️ Proje Yapısı (Özet)
+### 3. Proje Yönetimi
+![Proje Yönetimi](docs/images/projects.png)
 
-taskflow-backend/  
-│  
-├── apps/  
-│ ├── users/ # Kullanıcı, admin ve auth işlemleri  
-│ ├── tasks/ # Task domain yapısı  
-│ └── projects/ # Project domain yapısı  
-│  
-├── core/  
-│ ├── auth/ # Custom JWT & blacklist logic  
-│ └── middleware/ # Global request/response kontrolleri  
-│  
-├── config/  
-│ ├── settings/ # Base / local / prod ayarları  
-│ └── urls.py  
-│  
-├── .env.example  
-└── manage.py  
+### 4. Kanban Görev Tahtası
+![Kanban Görev Tahtası](docs/images/kanban.png)
 
+### 5. Swagger API Dokümantasyonu (Backend)
+![Swagger API Dokümantasyonu](docs/images/swagger.png)
+
+### 6. Django Yönetim (Admin) Paneli
+![Django Yönetim Paneli](docs/images/admin.png)
 
 ---
 
-## 🔐 Authentication Akışı
+## 🌟 Önemli Özellikler & Çözümler
 
-- Login → Access & Refresh token üretilir
-- Protected endpoint’ler JWT ile korunur
-- Logout:
-  - Refresh token blacklist’e eklenir
-  - Token kontrolü Redis + DB üzerinden yapılır
-- Expired veya blacklist’teki token’lar otomatik olarak reddedilir
-
----
-
-## 📦 Kullanılan Teknolojiler
-
-- Python 3.10+
-- Django 5.x
-- Django REST Framework
-- SimpleJWT
-- Redis
-- drf-spectacular (Swagger / OpenAPI)
-- Docker (Redis için)
+- **Decoupled Architecture**: Django REST Framework (DRF) API backend ve React Vite frontend ayrık olarak kurgulanmıştır.
+- **Roles claims in JWT**: Her API isteğinde izin doğrulaması için veritabanına atılan SQL sorguları, rollerin SimpleJWT payload claim'lerine gömülmesiyle tamamen sıfırlanmıştır.
+- **Full CRUD Operations**: Projeler ve Görevler API'leri tam CRUD (`ModelViewSet`) işlemlerini desteklemektedir.
+- **Görev Atama Kısıtlamaları**: Bir göreve çalışan atarken, bu çalışanın sadece o görevin ait olduğu projenin üyesi olması validation katmanında güvence altına alınmıştır.
+- **Hata Toleranslı Redis Blacklist**: Redis sunucusunun çevrimdışı olması durumunda sistem çökmez; hata loglanarak JWT doğrulama akışı güvenli varsayılanlarla devam eder (SPOF engellenmiştir).
+- **7/7 Unit Test Coverage**: JWT rolleri, token blacklist ve CRUD kısıtlamalarını kapsayan test suite mevcuttur.
 
 ---
 
-## ⚙️ Kurulum
+## ⚙️ Teknolojiler
 
-### 1. Ortam Değişkenleri
+- **Backend**: Python 3.9+, Django 4.2+, Django REST Framework, SimpleJWT (OAuth2/JWT Auth), Django Filter, DRF-Spectacular (Swagger/OpenAPI).
+- **Database**: PostgreSQL (Docker) / SQLite (Yerel).
+- **Cache & Blacklist**: Redis.
+- **Frontend**: React 19, Vite, Tailwind CSS v4, Lucide Icons.
+- **DevOps**: Docker, Docker Compose, Multi-stage Dockerfile.
 
-cp .env.example .env
+---
 
-### 2. Sanal Ortam & Bağımlılıklar
-python -m venv .venv  
-source .venv/bin/activate  # Windows: .venv\Scripts\activate  
-pip install -r requirements.txt  
+## 🚀 Yerel Kurulum & Çalıştırma
 
-### 3. Redis
-docker run -d --name taskflow-redis -p 6379:6379 redis:7
+### 1. Backend Kurulumu
+Proje klasöründe terminal açın:
+```bash
+# Bağımlılıkları yükleyin
+pip install -r requirements.txt
 
-### 4. Migration & Server
-python manage.py migrate  
-python manage.py runserver  
+# Veritabanını göçürün (Migrate)
+python manage.py migrate
 
-### 📘 API Dokümantasyonu
+# Test verilerini ve rollerini oluşturun (Seed)
+python manage.py seed_taskflow
+```
 
-### Swagger UI:
+### 2. Backend Sunucusunu Başlatma
+```bash
+python manage.py runserver
+```
+API sunucusu default olarak `http://127.0.0.1:8000` adresinde çalışacaktır.
+- **API Dokümantasyonu (Swagger)**: `http://127.0.0.1:8000/swagger/` adresinden tüm endpoint'leri görüntüleyip test edebilirsiniz.
 
-http://127.0.0.1:8000/api/docs/
+### 3. Frontend Kurulumu & Başlatma
+Yeni bir terminalde `frontend` klasörüne geçin:
+```bash
+cd frontend
+
+# Bağımlılıkları yükleyin
+npm install
+
+# Geliştirici sunucusunu başlatın
+npm run dev
+```
+Frontend default olarak `http://localhost:5173` adresinde çalışacaktır.
+
+---
+
+## 👥 Test Personel & Admin Bilgileri
+
+Sistemde departmanlar için otomatik olarak oluşturulmuş hazır test kullanıcıları mevcuttur. 
+
+**Yönetici (Admin) Giriş Bilgileri:**
+*   **Kullanıcı Adı:** `admin@baykar.com`
+*   **Şifre:** `adminpassword`
+
+**Personel Giriş Bilgileri:**
+*   **Şifre (Tümü İçin):** `testpassword`
+
+| Kullanıcı E-postası | Rolü | Görev Yetkileri |
+|---|---|---|
+| `manager@baykar.com` | MANAGER | Proje ve Görev oluşturabilir/düzenleyebilir. |
+| `user1@baykar.com` | USER | Kendisine atanan görevleri güncelleyebilir. |
+| `user2@baykar.com` | USER | Kendisine atanan görevleri güncelleyebilir. |
+| `user3@baykar.com` | USER | Kendisine atanan görevleri güncelleyebilir. |
+
+---
+
+## 🧪 Birim Testlerini Çalıştırma
+
+Tüm unit testleri çalıştırmak için projenin kök dizininde:
+```bash
+python manage.py test
+```
+
+---
+
+## 🐳 Docker ile Ayağa Kaldırma (Alternatif)
+
+Kök dizindeki Docker Compose dosyası ile postgres, redis, django ve react sunucularını tek komutla çalıştırabilirsiniz:
+```bash
+docker-compose up --build
+```
+`docker-compose` otomatik olarak veritabanlarını oluşturur, migrations uygular ve default test personellerini sisteme yükler. Arayüze `http://localhost:5173` adresinden doğrudan erişebilirsiniz.
