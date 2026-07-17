@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from django.db import models
 from .models import Project
 from .serializers import ProjectListSerializer, ProjectDetailSerializer, ProjectWriteSerializer
@@ -27,5 +28,22 @@ class ProjectViewSet(ModelViewSet):
         ).distinct().select_related("owner").prefetch_related("members").order_by("-id")
 
     def perform_create(self, serializer):
-        # Automatically set request user as project owner
-        serializer.save(owner=self.request.user)
+        user = self.request.user
+        
+        # Enforce that only ADMIN and MANAGER roles can create projects
+        is_manager_or_admin = user.roles.filter(name__in=["ADMIN", "MANAGER"]).exists() or user.is_superuser
+        if not is_manager_or_admin:
+            raise PermissionDenied("Proje oluşturmak için yetkiniz bulunmamaktadır. Sadece Yönetici (Admin) veya Müdür (Manager) rolündeki kullanıcılar proje oluşturabilir.")
+            
+        serializer.save(owner=user)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        # Only project owner, admin or manager can delete project
+        is_owner = instance.owner == user
+        is_manager_or_admin = user.roles.filter(name__in=["ADMIN", "MANAGER"]).exists() or user.is_superuser
+        
+        if not (is_owner or is_manager_or_admin):
+            raise PermissionDenied("Bu projeyi silmek için yetkiniz bulunmamaktadır.")
+            
+        instance.delete()

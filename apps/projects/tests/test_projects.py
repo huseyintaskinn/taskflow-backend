@@ -8,6 +8,7 @@ class ProjectAPITests(APITestCase):
     def setUp(self):
         # Create Roles
         self.admin_role = Role.objects.create(name="ADMIN", description="Admin Role")
+        self.manager_role = Role.objects.create(name="MANAGER", description="Manager Role")
         self.user_role = Role.objects.create(name="USER", description="User Role")
 
         # Create Users
@@ -15,7 +16,7 @@ class ProjectAPITests(APITestCase):
         self.admin_user.roles.add(self.admin_role)
 
         self.user1 = User.objects.create_user(email="user1@baykar.com", password="testpassword")
-        self.user1.roles.add(self.user_role)
+        self.user1.roles.add(self.manager_role) # Assign Manager role so user1 can create projects
 
         self.user2 = User.objects.create_user(email="user2@baykar.com", password="testpassword")
         self.user2.roles.add(self.user_role)
@@ -72,3 +73,15 @@ class ProjectAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_project = Project.objects.get(name="New Project")
         self.assertEqual(new_project.owner, self.user1)
+
+    def test_non_manager_cannot_create_project(self):
+        """
+        Verify that a regular user without MANAGER/ADMIN roles cannot create a project.
+        """
+        token = self.get_jwt_token("user2@baykar.com")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+        payload = {"name": "Unauthorized Project"}
+        response = self.client.post(self.list_url, payload, format="json")
+        
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

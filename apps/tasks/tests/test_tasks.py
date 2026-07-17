@@ -74,3 +74,24 @@ class TaskAPITests(APITestCase):
         response = self.client.post(self.list_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Task.objects.filter(title="Aerodynamic Test Valid").count(), 1)
+
+    def test_add_comment_to_task(self):
+        """
+        Verify that adding a comment to a task succeeds.
+        """
+        token = self.get_jwt_token("user1@baykar.com")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+        task = Task.objects.create(
+            project=self.project,
+            title="Task to Comment",
+            status="TODO",
+            priority="LOW"
+        )
+        url = reverse("task-detail", args=[task.id]) + "comments/"
+        payload = {"content": "This is a test comment"}
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(task.comments.count(), 1)
+        self.assertEqual(task.comments.first().content, "This is a test comment")
+
