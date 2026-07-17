@@ -2,4 +2,8 @@
 __pycache__/
 *.pyc
 .idea/
-.env
+db.sqlite3
+node_modules/
+dist/
+.DS_Store
+*.log
