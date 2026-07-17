@@ -9,22 +9,22 @@ Proje; Django REST Framework (DRF) tabanlı güvenli bir API katmanı ve modern,
 ## 📸 Arayüz Ekran Görüntüleri
 
 ### 1. Giriş Ekranı
-![Giriş Ekranı](docs/images/login.png)
+<img width="415" height="400" alt="image" src="https://github.com/user-attachments/assets/b1ed6fc1-2dd0-4403-8175-efb012381ac6" />
 
 ### 2. Genel Durum & Metrikler (Dashboard)
-![Dashboard Paneli](docs/images/dashboard.png)
+<img width="815" height="450" alt="image" src="https://github.com/user-attachments/assets/4801d4e8-def6-4da8-8db2-16ac5300cb03" />
 
 ### 3. Proje Detay Sayfası & Ekip Yönetimi
-![Proje Yönetimi](docs/images/projects.png)
+<img width="815" height="450" alt="image" src="https://github.com/user-attachments/assets/074f7f34-36fe-4f39-b9fe-0f1e899fba36" />
 
 ### 4. Kanban Görev Tahtası
-![Kanban Görev Tahtası](docs/images/kanban.png)
+<img width="815" height="300" alt="image" src="https://github.com/user-attachments/assets/c8b2cf4f-57b0-42c2-9106-0785535484d4" />
 
 ### 5. Sağdan Kayan Görev Detay Paneli & Yorumlar
-![Görev Detay Paneli](docs/images/task_detail.png)
+<img width="415" height="315" alt="image" src="https://github.com/user-attachments/assets/6bd21941-98d2-492c-a476-8fda6bc19ff4" />
 
 ### 6. Swagger API Dokümantasyonu (Backend)
-![Swagger API Dokümantasyonu](docs/images/swagger.png)
+<img width="815" height="1000" alt="127 0 0 1_8000_api_docs_" src="https://github.com/user-attachments/assets/c94561b9-0c37-471d-a9da-34b8780f9033" />
 
 ---
 
@@ -72,7 +72,7 @@ python manage.py seed_taskflow
 python manage.py runserver
 ```
 API sunucusu default olarak `http://127.0.0.1:8000` adresinde çalışacaktır.
-- **API Dokümantasyonu (Swagger)**: `http://127.0.0.1:8000/swagger/` adresinden tüm endpoint'leri görüntüleyip test edebilirsiniz.
+- **API Dokümantasyonu (Swagger)**: `http://127.0.0.1:8000/api/docs/` adresinden tüm endpoint'leri görüntüleyip test edebilirsiniz.
 
 ### 3. Frontend Kurulumu & Başlatma
 Yeni bir terminalde `frontend` klasörüne geçin:
